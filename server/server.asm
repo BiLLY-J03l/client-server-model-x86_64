@@ -80,7 +80,7 @@ recv_msg_buf resb recv_msg_buf_len + 1	; 1024 bytes
 
 msg_to_send_str resb msg_to_send_len + 1	; 101 byttes
 
-
+errno_code resq 1
 
 section .text
 global main
@@ -328,35 +328,39 @@ sock_close:
 
 sock_create_err:
 	neg rax
-	
+	mov [errno_code] , rax	
+
 	mov rdi , fmt_err_str_1
 	mov rsi , rax
 	call printf
 	
 	;exit with the err code
-	mov rdi , rax
+	mov rdi , [errno_code]
 	mov rax , 60
 	syscall
 
 sock_close_err:
 	neg rax
+	mov [errno_code] , rax
+
 	mov rdi , fmt_err_str_2
 	mov rsi , rax
 	call printf
 	
 	;exit with the err code
-	mov rdi , rax
+	mov rdi , [errno_code]
 	mov rax , 60
 	syscall
 
 accept_conn_err:
 	neg rax
+	mov [errno_code] , rax
 	mov rdi , fmt_err_str_11
 	mov rsi , rax
 	call printf
 	
 	;exit with err code
-	mov rdi , rax
+	mov rdi , [errno_code]
 	mov rax , 60
 	syscall
 
@@ -414,26 +418,26 @@ init_conn:
 
 bind_err:
 	neg rax
-	
+	mov [errno_code] , rax
 	mov rdi , fmt_err_str_7
 	mov rsi , rax
 	call printf
 	
 	; EXIT WIRH ERR CODE
-	mov rdi , rax
+	mov rdi , [errno_code]
 	mov rax , 60
 	syscall
 
 listen_err:
 	neg rax
-	
+	mov [errno_code] , rax
 	mov rdi , fmt_err_str_9
 	mov rsi , [server_port_int]
 	mov rdx , rax
 	call printf
 	
 	; EXIT WITH ERR CODE
-	mov rdi , rax
+	mov rdi , [errno_code]
 	mov rax , 60
 	syscall
 
@@ -453,23 +457,25 @@ send_msg:
 
 recv_buf_err:
 	neg rax
+	mov [errno_code] , rax
 	mov rdi , fmt_err_str_8
 	mov rsi , rax
 	call printf
 	
 	; EXIT WITH ERR CODE
-	mov rdi , rax
+	mov rdi , [errno_code]
 	mov rax , 60
 	syscall
 
 send_msg_err:
 	neg rax
+	mov [errno_code] , rax
 	mov rdi , fmt_err_str_10
 	mov rsi , rax
 	call printf
 	
 	;EXIT WITH ERR CODE
-	mov rdi , rax
+	mov rdi , [errno_code]
 	mov rax , 60
 	syscall
 
